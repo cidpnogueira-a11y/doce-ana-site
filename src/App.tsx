@@ -29,7 +29,15 @@ const doceImages = [
 
 function App() {
   const [scrolled, setScrolled] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [lightbox, setLightbox] = useState<{ images: typeof bentoImages; index: number } | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,12 +92,14 @@ function App() {
         
         {/* Hero Section */}
         <section id="home" className="min-h-[85vh] flex flex-col items-center justify-center text-center px-[5%] py-20 relative overflow-hidden">
-          {/* Digital Petals WebGL Shader Background */}
-          <div className="absolute inset-0 z-0" style={{ pointerEvents: 'auto' }}>
-            <DigitalPetalsShader />
-          </div>
+          {/* Digital Petals WebGL Shader Background — disabled on mobile for performance */}
+          {!isMobile && (
+            <div className="absolute inset-0 z-0" style={{ pointerEvents: 'auto' }}>
+              <DigitalPetalsShader />
+            </div>
+          )}
           {/* Overlay for text readability */}
-          <div className="absolute inset-0 z-[1] bg-[#FBF8F1]/70 backdrop-blur-[2px]" />
+          <div className={`absolute inset-0 z-[1] ${isMobile ? 'bg-[#FBF8F1]' : 'bg-[#FBF8F1]/70 backdrop-blur-[2px]'}`} />
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -163,6 +173,7 @@ function App() {
                   <img
                     src={img.src}
                     alt={img.alt}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     draggable={false}
                   />
@@ -291,7 +302,7 @@ function App() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center"
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
             onClick={closeLightbox}
           >
             {/* Close button */}
