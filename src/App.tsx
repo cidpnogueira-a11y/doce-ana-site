@@ -185,6 +185,9 @@ function App() {
             </div>
           </ContainerScroll>
 
+          {/* Spacer between grids */}
+          <div className="h-24 md:h-16" />
+
           {/* ContainerScroll - Docinhos */}
           <ContainerScroll
             titleComponent={
